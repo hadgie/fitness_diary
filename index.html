@@ -1,90 +1,806 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🔥 자취생 다이어트 & 운동 관리 앱</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #eee; }
-    .tab.active { background: #ccc; }
-    .tab-content { display: none; padding: 20px; }
-    .tab-content.active { display: block; }
-    .section { margin-bottom: 20px; }
-    .card { border: 1px solid #ccc; padding: 10px; margin: 5px; }
-    .meal-option.selected { background: #cde; font-weight: bold; }
-    .exercise-item.completed { background: #dff0d8; }
-    #progressBar { width: 100%; background: #eee; height: 20px; border-radius: 10px; overflow: hidden; }
-    #progressFill { height: 100%; background: #76c7c0; width: 0%; transition: width 0.5s; }
-    .dark-mode { background: #222; color: white; }
-    .dark-mode .tab { background: #333; color: white; }
-    .dark-mode .tab.active { background: #444; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>피트니스 트래커</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196F3">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .app-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .app-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .app-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2196F3;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .week-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .week-btn {
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .week-btn.active {
+            background: #2196F3;
+            color: white;
+        }
+
+        .progress-container {
+            background: #e9ecef;
+            border-radius: 25px;
+            padding: 4px;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 20px;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .exercise-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-item.completed {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .exercise-item.failed {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+
+        .exercise-checkbox {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .meal-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .meal-option {
+            flex: 1;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .meal-option.selected {
+            background: #2196F3;
+            color: white;
+        }
+
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .shopping-item input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .message {
+            display: none;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .workout-day {
+            margin-bottom: 30px;
+        }
+
+        .day-title {
+            background: linear-gradient(135deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .day-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .target-weight {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+
+        .export-import {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .app-header h1 {
+                font-size: 2rem;
+            }
+
+            .tab {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .meal-options {
+                flex-direction: column;
+            }
+        }
+
+        .dark-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .dark-mode .card,
+        .dark-mode .tab-content {
+            background: #34495e;
+            color: white;
+        }
+
+        .dark-mode .exercise-item,
+        .dark-mode .shopping-item,
+        .dark-mode .form-group input {
+            background: #2c3e50;
+            color: white;
+            border-color: #495057;
+        }
+    </style>
 </head>
 <body>
-  <div>
-    <div class="tab active" onclick="showTab('settings')">설정</div>
-    <div class="tab" onclick="showTab('progress')">진행상황</div>
-    <div class="tab" onclick="showTab('workout')">운동</div>
-    <div class="tab" onclick="showTab('meals')">식단</div>
-  </div>
+    <div class="container">
+        <header class="app-header">
+            <h1>💪 피트니스 트래커</h1>
+            <p>목표를 설정하고, 운동을 기록하고, 진행상황을 추적하세요!</p>
+        </header>
 
-  <div id="settings" class="tab-content active">
-    <h2>목표 설정</h2>
-    <div class="section">
-      현재 체중: <input type="number" id="currentWeight" /> kg<br />
-      목표 체중: <input type="number" id="targetWeight" /> kg<br />
-      체지방률: <input type="number" id="currentBodyFat" /> %<br />
-      골격근량: <input type="number" id="muscleMass" /> kg<br />
-      <button onclick="saveGoals()">목표 저장</button>
-      <div id="goalMessage"></div>
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('goals')">🎯 목표 설정</div>
+            <div class="tab" onclick="showTab('progress')">📊 진행상황</div>
+            <div class="tab" onclick="showTab('workout')">💪 운동</div>
+            <div class="tab" onclick="showTab('meal')">🍽️ 식단</div>
+            <div class="tab" onclick="showTab('shopping')">🛒 장보기</div>
+            <div class="tab" onclick="showTab('settings')">⚙️ 설정</div>
+        </div>
+
+        <!-- 목표 설정 탭 -->
+        <div id="goals" class="tab-content active">
+            <div class="card">
+                <div class="card-title">🎯 기본 목표</div>
+                <div class="form-group">
+                    <label for="currentWeight">현재 체중 (kg)</label>
+                    <input type="number" id="currentWeight" step="0.1" placeholder="현재 체중을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="targetWeight">목표 체중 (kg)</label>
+                    <input type="number" id="targetWeight" step="0.1" placeholder="목표 체중을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="currentBodyFat">현재 체지방률 (%)</label>
+                    <input type="number" id="currentBodyFat" step="0.1" placeholder="체지방률을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="muscleMass">근육량 목표</label>
+                    <input type="number" id="muscleMass" step="0.1" placeholder="목표 근육량을 입력하세요">
+                </div>
+                <button class="btn" onclick="saveGoals()">목표 저장</button>
+                <div id="goalMessage" class="message"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🏋️ 1RM 설정</div>
+                <div class="form-group">
+                    <label for="benchPress1RM">벤치프레스 1RM (kg)</label>
+                    <input type="number" id="benchPress1RM" step="2.5" placeholder="벤치프레스 1RM">
+                </div>
+                <div class="form-group">
+                    <label for="cableRow1RM">케이블 로우 1RM (kg)</label>
+                    <input type="number" id="cableRow1RM" step="2.5" placeholder="케이블 로우 1RM">
+                </div>
+                <div class="form-group">
+                    <label for="shoulderPress1RM">숄더프레스 1RM (kg)</label>
+                    <input type="number" id="shoulderPress1RM" step="2.5" placeholder="숄더프레스 1RM">
+                </div>
+                <div class="form-group">
+                    <label for="cableCurl1RM">케이블 컬 1RM (kg)</label>
+                    <input type="number" id="cableCurl1RM" step="2.5" placeholder="케이블 컬 1RM">
+                </div>
+                <button class="btn" onclick="save1RM()">1RM 저장</button>
+                <div id="oneRMMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- 진행상황 탭 -->
+        <div id="progress" class="tab-content">
+            <div class="card">
+                <div class="card-title">📈 전체 진행상황</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="currentWeightDisplay">0</div>
+                        <div class="stat-label">현재 체중 (kg)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="targetWeightDisplay">0</div>
+                        <div class="stat-label">목표 체중 (kg)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="weightLossDisplay">0</div>
+                        <div class="stat-label">감량 체중 (kg)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="progressPercentage">0%</div>
+                        <div class="stat-label">목표 달성률</div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📅 주간 기록</div>
+                <div class="week-buttons">
+                    <button class="week-btn active" onclick="selectWeek(1)">1주차</button>
+                    <button class="week-btn" onclick="selectWeek(2)">2주차</button>
+                    <button class="week-btn" onclick="selectWeek(3)">3주차</button>
+                    <button class="week-btn" onclick="selectWeek(4)">4주차</button>
+                    <button class="week-btn" onclick="selectWeek(5)">5주차</button>
+                    <button class="week-btn" onclick="selectWeek(6)">6주차</button>
+                </div>
+                <div class="form-group">
+                    <label for="weeklyWeight">체중 (kg)</label>
+                    <input type="number" id="weeklyWeight" step="0.1" placeholder="이번 주 체중">
+                </div>
+                <div class="form-group">
+                    <label for="weeklyBodyFat">체지방률 (%)</label>
+                    <input type="number" id="weeklyBodyFat" step="0.1" placeholder="이번 주 체지방률">
+                </div>
+                <button class="btn" onclick="saveWeeklyProgress()">주간 기록 저장</button>
+                <div id="weeklyMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- 운동 탭 -->
+        <div id="workout" class="tab-content">
+            <div class="card">
+                <div class="card-title">💪 운동 프로그램</div>
+                <div class="week-buttons">
+                    <button class="week-btn active" onclick="selectWorkoutWeek(1)">1주차</button>
+                    <button class="week-btn" onclick="selectWorkoutWeek(2)">2주차</button>
+                    <button class="week-btn" onclick="selectWorkoutWeek(3)">3주차</button>
+                    <button class="week-btn" onclick="selectWorkoutWeek(4)">4주차</button>
+                    <button class="week-btn" onclick="selectWorkoutWeek(5)">5주차</button>
+                    <button class="week-btn" onclick="selectWorkoutWeek(6)">6주차</button>
+                </div>
+
+                <!-- Day 1 -->
+                <div class="workout-day">
+                    <div class="day-title">Day 1 - 전신 운동</div>
+                    <div class="day-content">
+                        <div class="exercise-item">
+                            <input type="checkbox" id="hanging-knee-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            행잉 니 레이즈 - 12-15회 × 3세트
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="slow-pushup-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            슬로우 푸시업 - 8-12회 × 3세트
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="bench-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            벤치프레스 - 8-12회 × 3세트
+                            <span id="bench-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="pec-deck-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            펙 덱 플라이 - 8-12회 × 3세트
+                            <span id="pec-deck-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-row-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 로우 - 8-12회 × 3세트
+                            <span id="cable-row-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="pullup-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            풀업 - 최대한 × 3세트
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="shoulder-press-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            숄더프레스 - 8-12회 × 3세트
+                            <span id="shoulder-press-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="reverse-pec-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            리버스 펙 덱 - 8-12회 × 3세트
+                            <span id="reverse-pec-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-curl-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 컬 - 8-12회 × 3세트
+                            <span id="cable-curl-weight-day1" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-pushdown-day1" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 푸시다운 - 8-12회 × 3세트
+                            <span id="cable-pushdown-weight-day1" class="target-weight"></span>
+                        </div>
+                        <button class="btn" onclick="saveWorkout('day1')">Day 1 완료</button>
+                    </div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="workout-day">
+                    <div class="day-title">Day 2 - 유산소 + 라이트</div>
+                    <div class="day-content">
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cardio1-day2" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            유산소 1 - 20분
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cardio2-day2" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            유산소 2 - 20분
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="bench-day2" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            벤치프레스 - 12-15회 × 3세트
+                            <span id="bench-weight-day2" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-row-day2" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 로우 - 12-15회 × 3세트
+                            <span id="cable-row-weight-day2" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="shoulder-press-day2" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            숄더프레스 - 12-15회 × 3세트
+                            <span id="shoulder-press-weight-day2" class="target-weight"></span>
+                        </div>
+                        <button class="btn" onclick="saveWorkout('day2')">Day 2 완료</button>
+                    </div>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="workout-day">
+                    <div class="day-title">Day 3 - 고강도 트레이닝</div>
+                    <div class="day-content">
+                        <div class="exercise-item">
+                            <input type="checkbox" id="bench-day3" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            벤치프레스 - 3-6회 × 3세트
+                            <span id="bench-weight-day3" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-row-day3" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 로우 - 3-6회 × 3세트
+                            <span id="cable-row-weight-day3" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="shoulder-press-day3" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            숄더프레스 - 3-6회 × 3세트
+                            <span id="shoulder-press-weight-day3" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="pec-deck-day3" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            펙 덱 플라이 - 8-12회 × 3세트
+                            <span id="pec-deck-weight-day3" class="target-weight"></span>
+                        </div>
+                        <div class="exercise-item">
+                            <input type="checkbox" id="cable-curl-day3" class="exercise-checkbox" onchange="updateExerciseStatus(this)">
+                            케이블 컬 - 8-12회 × 3세트
+                            <span id="cable-curl-weight-day3" class="target-weight"></span>
+                        </div>
+                        <button class="btn" onclick="saveWorkout('day3')">Day 3 완료</button>
+                    </div>
+                </div>
+
+                <div id="workoutMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- 식단 탭 -->
+        <div id="meal" class="tab-content">
+            <div class="card">
+                <div class="card-title">🍽️ 식단 계획</div>
+                
+                <div class="card" style="margin: 20px 0;">
+                    <div class="card-title">🌅 아침 식사</div>
+                    <div class="meal-options">
+                        <div class="meal-option" onclick="selectMeal('breakfast', 'rice', this)">
+                            <strong>밥 중심</strong><br>
+                            현미밥 + 계란 + 야채
+                        </div>
+                        <div class="meal-option" onclick="selectMeal('breakfast', 'noodle', this)">
+                            <strong>면 중심</strong><br>
+                            오트밀 + 과일 + 견과류
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <div class="card-title">🌞 점심 식사</div>
+                    <div class="meal-options">
+                        <div class="meal-option" onclick="selectMeal('lunch', 'rice', this)">
+                            <strong>밥 중심</strong><br>
+                            현미밥 + 닭가슴살 + 채소
+                        </div>
+                        <div class="meal-option" onclick="selectMeal('lunch', 'noodle', this)">
+                            <strong>면 중심</strong><br>
+                            통밀면 + 해산물 + 야채
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin: 20px 0;">
+                    <div class="card-title">🌙 저녁 식사</div>
+                    <div class="meal-options">
+                        <div class="meal-option" onclick="selectMeal('dinner', 'rice', this)">
+                            <strong>밥 중심</strong><br>
+                            현미밥 + 생선 + 샐러드
+                        </div>
+                        <div class="meal-option" onclick="selectMeal('dinner', 'noodle', this)">
+                            <strong>면 중심</strong><br>
+                            퀴노아 + 두부 + 채소
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 장보기 탭 -->
+        <div id="shopping" class="tab-content">
+            <div class="card">
+                <div class="card-title">🛒 장보기 리스트</div>
+                
+                <h3>🥩 단백질</h3>
+                <div class="shopping-item">
+                    <input type="checkbox" id="chicken-breast">
+                    <label for="chicken-breast">닭가슴살</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="fish">
+                    <label for="fish">생선 (연어, 고등어)</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="eggs">
+                    <label for="eggs">계란</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="tofu">
+                    <label for="tofu">두부</label>
+                </div>
+
+                <h3>🌾 탄수화물</h3>
+                <div class="shopping-item">
+                    <input type="checkbox" id="brown-rice">
+                    <label for="brown-rice">현미</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="oats">
+                    <label for="oats">오트밀</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="quinoa">
+                    <label for="quinoa">퀴노아</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="whole-wheat">
+                    <label for="whole-wheat">통밀면</label>
+                </div>
+
+                <h3>🥬 채소</h3>
+                <div class="shopping-item">
+                    <input type="checkbox" id="broccoli">
+                    <label for="broccoli">브로콜리</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="spinach">
+                    <label for="spinach">시금치</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="cucumber">
+                    <label for="cucumber">오이</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="tomato">
+                    <label for="tomato">토마토</label>
+                </div>
+
+                <h3>🍎 과일</h3>
+                <div class="shopping-item">
+                    <input type="checkbox" id="apple">
+                    <label for="apple">사과</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="banana">
+                    <label for="banana">바나나</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="berries">
+                    <label for="berries">베리류</label>
+                </div>
+
+                <h3>🥜 견과류 & 기타</h3>
+                <div class="shopping-item">
+                    <input type="checkbox" id="almonds">
+                    <label for="almonds">아몬드</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="olive-oil">
+                    <label for="olive-oil">올리브오일</label>
+                </div>
+                <div class="shopping-item">
+                    <input type="checkbox" id="protein-powder">
+                    <label for="protein-powder">프로틴 파우더</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 설정 탭 -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <div class="card-title">⚙️ 앱 설정</div>
+                
+                <div class="export-import">
+                    <button class="btn" onclick="exportData()">📤 데이터 내보내기</button>
+                    <button class="btn" onclick="document.getElementById('importFile').click()">📥 데이터 가져오기</button>
+                    <input type="file" id="importFile" class="file-input" accept=".json" onchange="importData(event)">
+                </div>
+
+                <div class="export-import">
+                    <button class="btn btn-secondary" onclick="toggleDarkMode()">🌙 다크모드 토글</button>
+                    <button class="btn btn-danger" onclick="resetAllData()">🗑️ 모든 데이터 초기화</button>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3>📱 사용법</h3>
+                    <ul style="line-height: 1.8; margin-left: 20px;">
+                        <li><strong>목표 설정:</strong> 현재 체중, 목표 체중, 1RM을 입력하세요</li>
+                        <li><strong>운동 기록:</strong> 각 운동을 완료하면 체크박스를 선택하세요</li>
+                        <li><strong>진행상황:</strong> 매주 체중과 체지방률을 기록하세요</li>
+                        <li><strong>식단 계획:</strong> 원하는 식단 타입을 선택하세요</li>
+                        <li><strong>키보드 단축키:</strong> Ctrl+S (저장), Ctrl+E (내보내기)</li>
+                        <li><strong>모바일:</strong> 좌우 스와이프로 탭 전환 가능</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3>📊 통계</h3>
+                    <div id="appStats" class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalWorkouts">0</div>
+                            <div class="stat-label">총 운동 횟수</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="completionRate">0%</div>
+                            <div class="stat-label">완료율</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <h3>1RM 입력</h3>
-    벤치프레스: <input type="number" id="benchPress1RM" /> kg<br />
-    케이블로우: <input type="number" id="cableRow1RM" /> kg<br />
-    숄더프레스: <input type="number" id="shoulderPress1RM" /> kg<br />
-    케이블컬: <input type="number" id="cableCurl1RM" /> kg<br />
-    <button onclick="save1RM()">1RM 저장</button>
-    <div id="oneRMMessage"></div>
-  </div>
 
-  <div id="progress" class="tab-content">
-    <h2>체중 감량 진행</h2>
-    <div>현재 체중: <span id="currentWeightDisplay">-</span> kg</div>
-    <div>감량: <span id="weightLossDisplay">0</span> kg</div>
-    <div>진행률: <span id="progressPercentage">0%</span></div>
-    <div id="progressBar"><div id="progressFill"></div></div>
-  </div>
-
-  <div id="workout" class="tab-content">
-    <h2>운동 루틴</h2>
-    <p>각 운동 항목을 체크하여 완료 여부를 기록하세요.</p>
-    <div class="exercise-item"><input type="checkbox" class="exercise-checkbox" id="bench-day1" onchange="updateExerciseStatus(this)"> 벤치프레스</div>
-    <div class="exercise-item"><input type="checkbox" class="exercise-checkbox" id="cable-row-day1" onchange="updateExerciseStatus(this)"> 케이블로우</div>
-    <button onclick="saveWorkout('day1')">Day1 저장</button>
-    <div id="workoutMessage"></div>
-  </div>
-
-  <div id="meals" class="tab-content">
-    <h2>식사 선택</h2>
-    <div class="card">
-      <div class="card-title">아침</div>
-      <div class="meal-option" onclick="selectMeal('breakfast', 'rice', this)">계란밥</div>
-      <div class="meal-option" onclick="selectMeal('breakfast', 'noodle', this)">파스타</div>
-    </div>
-    <div class="card">
-      <div class="card-title">점심</div>
-      <div class="meal-option" onclick="selectMeal('lunch', 'rice', this)">닭가슴살밥</div>
-      <div class="meal-option" onclick="selectMeal('lunch', 'noodle', this)">참치파스타</div>
-    </div>
-    <div class="card">
-      <div class="card-title">저녁</div>
-      <div class="meal-option" onclick="selectMeal('dinner', 'rice', this)">두부밥</div>
-      <div class="meal-option" onclick="selectMeal('dinner', 'noodle', this)">닭가슴살파스타</div>
-    </div>
-  </div>
-
-  <script src="fitness_app.js"></script>
+    <script src="fitness-tracker.js"></script>
 </body>
 </html>
