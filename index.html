@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔥 자취생 다이어트 & 운동 관리 앱</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    .tab { display: inline-block; padding: 10px 20px; cursor: pointer; background: #eee; }
+    .tab.active { background: #ccc; }
+    .tab-content { display: none; padding: 20px; }
+    .tab-content.active { display: block; }
+    .section { margin-bottom: 20px; }
+    .card { border: 1px solid #ccc; padding: 10px; margin: 5px; }
+    .meal-option.selected { background: #cde; font-weight: bold; }
+    .exercise-item.completed { background: #dff0d8; }
+    #progressBar { width: 100%; background: #eee; height: 20px; border-radius: 10px; overflow: hidden; }
+    #progressFill { height: 100%; background: #76c7c0; width: 0%; transition: width 0.5s; }
+    .dark-mode { background: #222; color: white; }
+    .dark-mode .tab { background: #333; color: white; }
+    .dark-mode .tab.active { background: #444; }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="tab active" onclick="showTab('settings')">설정</div>
+    <div class="tab" onclick="showTab('progress')">진행상황</div>
+    <div class="tab" onclick="showTab('workout')">운동</div>
+    <div class="tab" onclick="showTab('meals')">식단</div>
+  </div>
+
+  <div id="settings" class="tab-content active">
+    <h2>목표 설정</h2>
+    <div class="section">
+      현재 체중: <input type="number" id="currentWeight" /> kg<br />
+      목표 체중: <input type="number" id="targetWeight" /> kg<br />
+      체지방률: <input type="number" id="currentBodyFat" /> %<br />
+      골격근량: <input type="number" id="muscleMass" /> kg<br />
+      <button onclick="saveGoals()">목표 저장</button>
+      <div id="goalMessage"></div>
+    </div>
+    <h3>1RM 입력</h3>
+    벤치프레스: <input type="number" id="benchPress1RM" /> kg<br />
+    케이블로우: <input type="number" id="cableRow1RM" /> kg<br />
+    숄더프레스: <input type="number" id="shoulderPress1RM" /> kg<br />
+    케이블컬: <input type="number" id="cableCurl1RM" /> kg<br />
+    <button onclick="save1RM()">1RM 저장</button>
+    <div id="oneRMMessage"></div>
+  </div>
+
+  <div id="progress" class="tab-content">
+    <h2>체중 감량 진행</h2>
+    <div>현재 체중: <span id="currentWeightDisplay">-</span> kg</div>
+    <div>감량: <span id="weightLossDisplay">0</span> kg</div>
+    <div>진행률: <span id="progressPercentage">0%</span></div>
+    <div id="progressBar"><div id="progressFill"></div></div>
+  </div>
+
+  <div id="workout" class="tab-content">
+    <h2>운동 루틴</h2>
+    <p>각 운동 항목을 체크하여 완료 여부를 기록하세요.</p>
+    <div class="exercise-item"><input type="checkbox" class="exercise-checkbox" id="bench-day1" onchange="updateExerciseStatus(this)"> 벤치프레스</div>
+    <div class="exercise-item"><input type="checkbox" class="exercise-checkbox" id="cable-row-day1" onchange="updateExerciseStatus(this)"> 케이블로우</div>
+    <button onclick="saveWorkout('day1')">Day1 저장</button>
+    <div id="workoutMessage"></div>
+  </div>
+
+  <div id="meals" class="tab-content">
+    <h2>식사 선택</h2>
+    <div class="card">
+      <div class="card-title">아침</div>
+      <div class="meal-option" onclick="selectMeal('breakfast', 'rice', this)">계란밥</div>
+      <div class="meal-option" onclick="selectMeal('breakfast', 'noodle', this)">파스타</div>
+    </div>
+    <div class="card">
+      <div class="card-title">점심</div>
+      <div class="meal-option" onclick="selectMeal('lunch', 'rice', this)">닭가슴살밥</div>
+      <div class="meal-option" onclick="selectMeal('lunch', 'noodle', this)">참치파스타</div>
+    </div>
+    <div class="card">
+      <div class="card-title">저녁</div>
+      <div class="meal-option" onclick="selectMeal('dinner', 'rice', this)">두부밥</div>
+      <div class="meal-option" onclick="selectMeal('dinner', 'noodle', this)">닭가슴살파스타</div>
+    </div>
+  </div>
+
+  <script src="fitness_app.js"></script>
+</body>
+</html>
